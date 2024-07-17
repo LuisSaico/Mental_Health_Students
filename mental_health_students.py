@@ -8,8 +8,25 @@ de principiante consistirá en centrarte en un factor contribuyente específico:
 en las puntuaciones medias de diagnóstico de los estudiantes internacionales."""
 
 import mysql.connector
+import config
 
-# Lists
+# CONNECTING WITH DATA BASE
+connection = mysql.connector.connect(
+    host=config.host,
+    user=confi.user,
+    password=config.password,
+    database=config.database
+
+)
+
+cursor = connection.cursor()
+# Creating database
+# cursor.execute("CREATE DATABASE students")
+# Creating table
+table = """CREATE TABLE studentss ( id int not null auto_increment, Name Varchar(255) not null, Age int not null, Gender Varchar(255) not null, Student_id Varchar(255) not null, Mental_problem Varchar(255) not null, primary key(id))"""
+# cursor.execute(table)
+
+# List
 invalid_dates = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
 
 # CREATING FATHER CLASS
@@ -81,8 +98,7 @@ def menu(student):
             print("Thanks.")
 
 
-
-
+cursor.close()
 
 
 
