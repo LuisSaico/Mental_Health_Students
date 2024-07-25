@@ -13,7 +13,7 @@ import config
 # CONNECTING WITH DATA BASE
 connection = mysql.connector.connect(
     host=config.host,
-    user=confi.user,
+    user=config.user,
     password=config.password,
     database=config.database
 
@@ -56,25 +56,34 @@ class Student(Person):
                 f"Id of the student: {self.student_id}\n"
                 f"Mental problem of the student: {self.mental_problem}")
 
-    # Ask for the mental health problem
-    @staticmethod
-    def ask(limit_students):
+# FUNCTION FOR INSERTING DATES
 
-        students = []
 
-        for _ in range(limit_students):
+def inserting_dates(student):
 
-            name = input("Enter the name of the student: ")
-            age = int(input("Enter the age of the student: "))
-            gender = input("Enter the gender of the estudent: ")
-            idd = input("Enter the id of the student: ")
-            problem = input("Enter the mental problem of the student: ")
-            student = Student(name, age, gender, idd, problem)
-            students.append(student)
+    table = """INSERT INTO studentss (Name, Age, Gender, Student_id, Mental_problem) VALUES (%s, %s, %s, %s, %s)"""
+    values = (student.name, student.age, student.gender, student.student_id, student.mental_problem)
+    cursor.execute(table, values)
+    connection.commit()
+
+# FUNCTION FOR SHOW ALL THE STUDENTS
+
+
+def show_students():
+
+    cursor.execute("""SELECT * FROM studentss""")
+    for (id, name, age, gender, student_id, mental_problem) in cursor.fetchall():
+
+        print(f"ID: {student_id}\n"
+              f"Name: {name}\n"
+              f"Age: {age}\n"
+              f"Gender: {gender}\n"
+              f"Mental Problem: {mental_problem}\n"
+              f"------------------------------")
 
 
 # MENU OF THE SYSTEM
-def menu(student):
+def menu():
 
     print("||SAVING MIND||\n")
 
@@ -87,19 +96,37 @@ def menu(student):
         choice = int(input("Enter your choice: "))
         print("=" * 30)
 
+        # Registering students
         if choice == 1:
-            student.ask()
+            name = input("Name of the student: ").lower()
+            age = int(input("Age of the student: "))
+            gender = input("Gender of the student: ").lower()
+            student_id = input("Id of the student: ").lower()
+            mental_problem = input("Mental problem of the student: ").lower()
+            student = Student(name, age, gender, student_id, mental_problem)
+            inserting_dates(student)
+            print("Registered student")
+            print("=" * 30)
 
+        # Showing all the students
         elif choice == 2:
-            print("showing")
+            show_students()
 
+        # Ending the program
         elif choice == 3:
             print("Leaving the system...")
             print("Thanks.")
+            break
+
+        else:
+            print("Invalid choise. Please try it again")
+            print("=" * 30)
 
 
+# ----------MAIN----------
+menu()
 cursor.close()
-
+connection.close()
 
 
 
