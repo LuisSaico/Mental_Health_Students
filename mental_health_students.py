@@ -23,7 +23,8 @@ cursor = connection.cursor()
 # Creating database
 # cursor.execute("CREATE DATABASE students")
 # Creating table
-table = """CREATE TABLE studentss ( id int not null auto_increment, Name Varchar(255) not null, Age int not null, Gender Varchar(255) not null, Student_id Varchar(255) not null, Mental_problem Varchar(255) not null, primary key(id))"""
+table = """CREATE TABLE studentss ( id int not null auto_increment, Name Varchar(255) not null, Age int not null, 
+Gender Varchar(255) not null, Student_id Varchar(255) not null, Mental_problem Varchar(255) not null, primary key(id))"""
 # cursor.execute(table)
 
 # List
@@ -81,6 +82,25 @@ def show_students():
               f"Mental Problem: {mental_problem}\n"
               f"------------------------------")
 
+# FUNCTION FOR ANALYZE THE MOST COMMON PROBLEM IN THE STUDENTS
+
+
+def analizating_dates():
+
+    table = """SELECT CASE WHEN Mental_problem LIKE '%stress%' THEN 'stress'
+    WHEN Mental_problem LIKE '%social%' THEN 'social'
+    WHEN Mental_problem LIKE '%pressure%' THEN 'pressure'
+    ELSE 'other'
+    END AS student_problem, COUNT(*) AS amount FROM studentss GROUP BY student_problem
+    ORDER BY amount DESC LIMIT 1;"""
+
+    cursor.execute(table)
+    dates = cursor.fetchone()
+
+    if dates:
+        student_problem, amount = dates
+        print(f"The most common mental problem in the students is '{student_problem.upper()}' with {amount} students.")
+
 
 # MENU OF THE SYSTEM
 def menu():
@@ -91,7 +111,8 @@ def menu():
 
         print("[1]-Register student\n"
               "[2]-Show the students\n"
-              "[3]-Leave the system\n")
+              "[3]-Analyze dates\n"
+              "[4]-Leave the system\n")
 
         choice = int(input("Enter your choice: "))
         print("=" * 30)
@@ -112,8 +133,13 @@ def menu():
         elif choice == 2:
             show_students()
 
-        # Ending the program
+        # Showing dates
         elif choice == 3:
+            analizating_dates()
+            print("=" * 30)
+
+        # Ending the program
+        elif choice == 4:
             print("Leaving the system...")
             print("Thanks.")
             break
