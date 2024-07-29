@@ -75,7 +75,8 @@ def show_students():
     cursor.execute("""SELECT * FROM studentss""")
     for (id, name, age, gender, student_id, mental_problem) in cursor.fetchall():
 
-        print(f"ID: {student_id}\n"
+        print(f"#{id}\n"
+              f"ID: {student_id}\n"
               f"Name: {name}\n"
               f"Age: {age}\n"
               f"Gender: {gender}\n"
@@ -102,6 +103,31 @@ def analizating_dates():
         print(f"The most common mental problem in the students is '{student_problem.upper()}' with {amount} students.")
 
 
+# FUNCTION FOR DELETE STUDENTS
+
+
+def delete_student(number_id):
+
+    table = """DELETE FROM studentss WHERE id = %s"""
+    cursor.execute(table, (number_id,))
+    connection.commit()
+
+
+# FUNCTION FOR UPDATE INFORMATION
+
+
+def update_information(number_id, field, new_information):
+
+    allowed_field = ["Name", "Age", "Gender", "Student_id", "Mental_problem"]
+    if field not in allowed_field:
+        raise ValueError(f"Error in {field}")
+
+    table = f"""UPDATE studentss set {field} = %s WHERE id = %s"""
+    values = (new_information, number_id)
+    cursor.execute(table, values)
+    connection.commit()
+
+
 # MENU OF THE SYSTEM
 def menu():
 
@@ -112,7 +138,9 @@ def menu():
         print("[1]-Register student\n"
               "[2]-Show the students\n"
               "[3]-Analyze dates\n"
-              "[4]-Leave the system\n")
+              "[4]-Delete student\n"
+              "[5]-Update information about the student\n"
+              "[6]-Leave the system\n")
 
         choice = int(input("Enter your choice: "))
         print("=" * 30)
@@ -138,12 +166,60 @@ def menu():
             analizating_dates()
             print("=" * 30)
 
-        # Ending the program
+        # Deleting student
         elif choice == 4:
+            id_number = int(input("Enter id number that you want to delete: "))
+            delete_student(id_number)
+            print("Student deleted")
+            print("=" * 30)
+
+        # Updating information
+        elif choice == 5:
+            id_number = int(input("Enter id number that you want to delete: "))
+            print(" ")
+            print("-----------ALLOWED INFORMATION----------\n"
+                  "|NAME|\n"
+                  "|AGE|\n"
+                  "|GENDER|\n"
+                  "|ID|\n"
+                  "|MENTAL PROBLEM|")
+            print("-"*30)
+            information = input("Enter what type of information about the student do you want to update: ").lower()
+            new_information = input("Enter the new information about the student: ").lower()
+
+            # Maping information about columns
+            if information in ["name", "gender", "student id", "mental problem"]:
+                new_information = str(new_information)
+
+                if information == "student id":
+                    information = "Student_id"
+
+                elif information == "mental problem":
+                    information = "Mental_problem"
+
+                else:
+                    information = information.capitalize()
+
+            elif information == "age":
+                new_information = int(new_information)
+                information = "Age"
+
+            else:
+                print("INVALID OPTION")
+                print("=" * 30)
+                continue
+
+            update_information(id_number, information, new_information)
+            print("Updating information")
+            print("=" * 30)
+
+        # Leaving the system
+        elif choice == 6:
             print("Leaving the system...")
             print("Thanks.")
             break
 
+        # Invalid options
         else:
             print("Invalid choise. Please try it again")
             print("=" * 30)
